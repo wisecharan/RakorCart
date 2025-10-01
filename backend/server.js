@@ -1,12 +1,15 @@
 import path from 'path';
-import { fileURLToPath } from 'url';
-import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import express from 'express';
 import mongoose from 'mongoose';
+import { fileURLToPath } from 'url';
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
-import dotenv from 'dotenv';
+import orderRoutes from './routes/orderRoutes.js';
+
+
 dotenv.config();
 
 // Connect to MongoDB
@@ -30,6 +33,7 @@ app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/orders', orderRoutes);
 
 // 2. Define __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);

@@ -1,14 +1,28 @@
-import { useParams, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { useGetProductDetailsQuery } from '../slices/productsApiSlice';
+import { addToCart } from '../slices/cartSlice';
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // State to manage the quantity selected by the user
+  const [qty, setQty] = useState(1);
 
   const {
     data: product,
     isLoading,
     error,
   } = useGetProductDetailsQuery(productId);
+
+  // Handler to dispatch the addToCart action and redirect
+  const addToCartHandler = () => {
+    dispatch(addToCart({ ...product, qty }));
+    navigate('/cart');
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -48,8 +62,30 @@ const ProductScreen = () => {
                   <span className="text-red-400">Out of Stock</span>
                 )}
               </p>
+
+              {/* Quantity Selector - NEW */}
+              {product.countInStock > 0 && (
+                <div className="mt-4 flex items-center">
+                  <label htmlFor="qty" className="mr-4">Qty</label>
+                  <select
+                    id="qty"
+                    value={qty}
+                    onChange={(e) => setQty(Number(e.target.value))}
+                    className="bg-gray-700 border border-gray-600 rounded-md p-2"
+                  >
+                    {[...Array(product.countInStock).keys()].map((x) => (
+                      <option key={x + 1} value={x + 1}>
+                        {x + 1}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
+            
+            {/* Add to Cart Button - UPDATED */}
             <button
+              onClick={addToCartHandler}
               className="mt-6 w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-500"
               disabled={product.countInStock === 0}
             >

@@ -1,15 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
-import { productsApiSlice } from './slices/productsApiSlice';
+import cartReducer from './slices/cartSlice';
+// Only need to import the base API slice
+import { apiSlice } from './slices/apiSlice'; 
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
-    [productsApiSlice.reducerPath]: productsApiSlice.reducer,
+    cart: cartReducer,
+    // Use the single apiSlice reducer
+    [apiSlice.reducerPath]: apiSlice.reducer, 
   },
-  // This middleware is essential for RTK Query to function
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(productsApiSlice.middleware),
+    // Only concatenate the middleware of the base apiSlice
+    getDefaultMiddleware().concat(apiSlice.middleware), 
   devTools: true,
 });
 

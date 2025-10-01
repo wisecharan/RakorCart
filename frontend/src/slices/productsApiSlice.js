@@ -1,23 +1,7 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { apiSlice } from './apiSlice'; // Import the central apiSlice
 
-// 1. Update the baseQuery to include the token
-const baseQuery = fetchBaseQuery({
-  baseUrl: '',
-  prepareHeaders: (headers, { getState }) => {
-    // Get the token from the auth slice in our Redux state
-    const { userInfo } = getState().auth;
-    if (userInfo && userInfo.token) {
-      // Set the authorization header
-      headers.set('authorization', `Bearer ${userInfo.token}`);
-    }
-    return headers;
-  },
-});
-
-export const productsApiSlice = createApi({
-  reducerPath: 'productsApi',
-  baseQuery, // Use the updated baseQuery
-  tagTypes: ['Product'],
+// Inject the product-specific endpoints into the base apiSlice
+export const productsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getProducts: builder.query({
       query: () => '/api/products',
@@ -58,6 +42,7 @@ export const productsApiSlice = createApi({
   }),
 });
 
+// Export hooks
 export const {
   useGetProductsQuery,
   useGetProductDetailsQuery,
