@@ -1,19 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
 import cartReducer from './slices/cartSlice';
-// Only need to import the base API slice
-import { apiSlice } from './slices/apiSlice'; 
+import wishlistReducer from './slices/wishlistSlice';
+import { apiSlice } from './slices/apiSlice';
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     cart: cartReducer,
-    // Use the single apiSlice reducer
-    [apiSlice.reducerPath]: apiSlice.reducer, 
+    wishlist: wishlistReducer,
+    [apiSlice.reducerPath]: apiSlice.reducer,
   },
+  // The middleware should only contain the single, central apiSlice.middleware
   middleware: (getDefaultMiddleware) =>
-    // Only concatenate the middleware of the base apiSlice
-    getDefaultMiddleware().concat(apiSlice.middleware), 
+    getDefaultMiddleware().concat(apiSlice.middleware),
   devTools: true,
 });
 

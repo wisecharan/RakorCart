@@ -1,11 +1,14 @@
-import { apiSlice } from './apiSlice'; // Import the central apiSlice
+import { apiSlice } from './apiSlice';
 
-// Inject the product-specific endpoints into the base apiSlice
 export const productsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getProducts: builder.query({
-      query: () => '/api/products',
+      query: ({ keyword, pageNumber }) => ({
+        url: '/api/products',
+        params: { keyword, pageNumber },
+      }),
       providesTags: ['Product'],
+      keepUnusedDataFor: 5,
     }),
     getProductDetails: builder.query({
       query: (productId) => `/api/products/${productId}`,
@@ -39,10 +42,21 @@ export const productsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Product'],
     }),
+    createReview: builder.mutation({
+      query: (data) => ({
+        url: `/api/products/${data.productId}/reviews`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Product'],
+    }),
+    getTopProducts: builder.query({
+      query: () => '/api/products/top',
+      keepUnusedDataFor: 5,
+    }),
   }),
 });
 
-// Export hooks
 export const {
   useGetProductsQuery,
   useGetProductDetailsQuery,
@@ -50,4 +64,6 @@ export const {
   useUpdateProductMutation,
   useUploadProductImageMutation,
   useDeleteProductMutation,
+  useCreateReviewMutation,
+  useGetTopProductsQuery,
 } = productsApiSlice;

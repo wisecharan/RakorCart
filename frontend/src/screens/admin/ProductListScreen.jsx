@@ -8,7 +8,9 @@ import {
 import { toast } from 'react-toastify';
 
 const ProductListScreen = () => {
-  const { data: products, isLoading, error } = useGetProductsQuery();
+  // Pass an empty object to the hook
+  const { data, isLoading, error, refetch } = useGetProductsQuery({});
+  
   const [deleteProduct, { isLoading: loadingDelete }] = useDeleteProductMutation();
   const [createProduct, { isLoading: loadingCreate }] = useCreateProductMutation();
   const navigate = useNavigate();
@@ -18,6 +20,7 @@ const ProductListScreen = () => {
       try {
         await deleteProduct(id);
         toast.success('Product deleted');
+        refetch(); // refetch is still a good practice here
       } catch (err) {
         toast.error(err?.data?.message || err.error);
       }
@@ -42,15 +45,13 @@ const ProductListScreen = () => {
         <button
           onClick={createProductHandler}
           className="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
-          disabled={loadingCreate}
         >
           <FaEdit className="inline-block mr-2" /> Create Product
         </button>
       </div>
 
-      {loadingCreate && <p>Creating Product...</p>}
-      {loadingDelete && <p>Deleting Product...</p>}
-
+      {loadingCreate && <p>Creating...</p>}
+      {loadingDelete && <p>Deleting...</p>}
       {isLoading ? (
         <p>Loading...</p>
       ) : error ? (
@@ -69,8 +70,8 @@ const ProductListScreen = () => {
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
-                <tr key={product._id} className="border-b border-gray-700 hover:bg-gray-700">
+              {data.products.map((product) => (
+                <tr key={product._id} className="border-b border-gray-700 hover:bg-gamma-700">
                   <td className="py-2 px-4">{product._id}</td>
                   <td className="py-2 px-4">{product.name}</td>
                   <td className="py-2 px-4">${product.price}</td>

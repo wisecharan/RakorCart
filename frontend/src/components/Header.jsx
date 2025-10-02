@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { logout } from '../slices/authSlice';
+import SearchBox from './SearchBox';
 
 const Header = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -23,6 +24,11 @@ const Header = () => {
         <Link to="/" className="text-2xl font-bold text-white hover:text-gray-300">
           Apple Store
         </Link>
+
+        <div className="flex-1 mx-8">
+          <SearchBox />
+        </div>
+
         <div className="flex items-center space-x-4">
           {/* User Info Dropdown */}
           {userInfo ? (
@@ -37,6 +43,14 @@ const Header = () => {
                 >
                   Profile
                 </Link>
+                
+                {/* This is the change: only show Wishlist if the user is NOT an admin */}
+                {!userInfo.isAdmin && (
+                  <Link to="/wishlist" className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600">
+                    Wishlist
+                  </Link>
+                )}
+
                 <button
                   onClick={logoutHandler}
                   className="block w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
@@ -54,7 +68,7 @@ const Header = () => {
           {/* Admin Menu Dropdown */}
           {userInfo && userInfo.isAdmin && (
             <div className="relative group">
-              <button className="font-semibold p-2 rounded-md bg-gray-700">Admin</button>
+              <Link to="/admin/dashboard" className="font-semibold p-2 rounded-md bg-gray-700">Admin</Link>
               <div className="absolute right-0 mt-2 w-48 bg-gray-700 rounded-md shadow-lg py-1 hidden group-hover:block z-10">
                 <Link to="/admin/productlist" className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600">
                   Products

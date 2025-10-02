@@ -47,3 +47,7 @@ const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+app.get('/api/config/paypal', (req, res) =>
+  res.send({ clientId: process.env.PAYPAL_CLIENT_ID })
+);
