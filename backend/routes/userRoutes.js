@@ -3,24 +3,27 @@ const router = express.Router();
 import {
   registerUser,
   loginUser,
+  logoutUser,
   getUserProfile,
   updateUserProfile,
   getUsers,
   deleteUser,
+  forgotPassword,
+  resetPassword,
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
-// Public routes
+// Public Routes
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+router.post('/logout', logoutUser);
+router.post('/forgotpassword', forgotPassword);
+router.put('/resetpassword/:resettoken', resetPassword);
 
-// User profile route (protected for logged-in users)
-router
-  .route('/profile')
-  .get(protect, getUserProfile)
-  .put(protect, updateUserProfile);
+// Private User Routes
+router.route('/profile').get(protect, getUserProfile).put(protect, updateUserProfile);
 
-// Admin-only routes
+// Private Admin Routes
 router.route('/').get(protect, admin, getUsers);
 router.route('/:id').delete(protect, admin, deleteUser);
 

@@ -22,7 +22,7 @@ const Header = () => {
     <header className="bg-gray-800 text-white shadow-lg">
       <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold text-white hover:text-gray-300">
-          Apple Store
+          RakorGo
         </Link>
 
         <div className="flex-1 mx-8">

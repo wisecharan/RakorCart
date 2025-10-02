@@ -9,8 +9,8 @@ const userSchema = mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
-      unique: true, // No two users can have the same email
+      required: true, 
+      unique: true,
     },
     password: {
       type: String,
@@ -19,15 +19,27 @@ const userSchema = mongoose.Schema(
     isAdmin: {
       type: Boolean,
       required: true,
-      default: false, // Default new users to not be admins
+      default: false,
     },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
+    timestamps: true,
   }
 );
 
-// We'll add password hashing logic here later
+// This function will run right before the user is saved
+userSchema.pre('save', async function (next) {
+  // We only want to run this function if the password was actually modified
+  if (!this.isModified('password')) {
+    return next();
+  }
+
+  // Hash the password
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
 
 const User = mongoose.model('User', userSchema);
 

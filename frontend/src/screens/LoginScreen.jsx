@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
+import { useLoginMutation } from '../slices/usersApiSlice'; // 1. Import the hook
 import { setCredentials } from '../slices/authSlice';
-import { toast } from 'react-toastify'; // We'll add this for notifications
+import { toast } from 'react-toastify';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -12,9 +12,10 @@ const LoginScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [login, { isLoading }] = useLoginMutation(); // 2. Use the hook
+
   const { userInfo } = useSelector((state) => state.auth);
 
-  // This effect redirects the user to the homepage if they are already logged in
   useEffect(() => {
     if (userInfo) {
       navigate('/');
@@ -24,12 +25,12 @@ const LoginScreen = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('/api/users/login', { email, password });
-      dispatch(setCredentials(data)); // Save user info to Redux state & local storage
-      navigate('/'); // Redirect to the homepage
+      // 3. Call the mutation function
+      const res = await login({ email, password }).unwrap(); 
+      dispatch(setCredentials({ ...res }));
+      navigate('/');
     } catch (err) {
-      // Use react-toastify to show an error notification
-      toast.error(err?.response?.data?.message || err.error);
+      toast.error(err?.data?.message || err.error);
     }
   };
 
@@ -40,56 +41,29 @@ const LoginScreen = () => {
         <form onSubmit={submitHandler} className="space-y-6">
           {/* Email Input */}
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-300"
-            >
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              className="w-full px-3 py-2 mt-1 text-white bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+            <label htmlFor="email" className="block text-sm font-medium text-gray-300">Email Address</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full px-3 py-2 mt-1 text-white bg-gray-700 border border-gray-600 rounded-md"/>
           </div>
 
           {/* Password Input */}
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-300"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              className="w-full px-3 py-2 mt-1 text-white bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <label htmlFor="password" className="block text-sm font-medium text-gray-300">Password</label>
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-3 py-2 mt-1 text-white bg-gray-700 border border-gray-600 rounded-md"/>
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-800"
-          >
-            Sign In
+          <div className="text-right text-sm">
+            <Link to="/forgotpassword" className="font-medium text-blue-400 hover:underline">Forgot Password?</Link>
+          </div>
+          
+          <button type="submit" disabled={isLoading} className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-gray-500">
+            {isLoading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 
-        {/* Link to Register Page */}
         <div className="text-center">
           <p className="text-sm text-gray-400">
             New Customer?{' '}
-            <Link to="/register" className="font-medium text-blue-400 hover:underline">
-              Register
-            </Link>
+            <Link to="/register" className="font-medium text-blue-400 hover:underline">Register</Link>
           </p>
         </div>
       </div>
