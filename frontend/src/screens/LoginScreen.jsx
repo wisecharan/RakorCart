@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLoginMutation } from '../slices/usersApiSlice'; // 1. Import the hook
+import { useLoginMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { toast } from 'react-toastify';
 
@@ -12,8 +12,7 @@ const LoginScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [login, { isLoading }] = useLoginMutation(); // 2. Use the hook
-
+  const [login, { isLoading }] = useLoginMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -25,7 +24,6 @@ const LoginScreen = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      // 3. Call the mutation function
       const res = await login({ email, password }).unwrap(); 
       dispatch(setCredentials({ ...res }));
       navigate('/');
@@ -36,34 +34,33 @@ const LoginScreen = () => {
 
   return (
     <div className="flex justify-center items-center mt-20">
-      <div className="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold text-center text-white">Sign In</h1>
-        <form onSubmit={submitHandler} className="space-y-6">
-          {/* Email Input */}
+      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md border border-border-light">
+        <h1 className="text-3xl font-bold text-center text-text-dark">Sign In</h1>
+        <form onSubmit={submitHandler} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300">Email Address</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full px-3 py-2 mt-1 text-white bg-gray-700 border border-gray-600 rounded-md"/>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+            <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full px-3 py-2 mt-1 text-text-dark bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"/>
           </div>
-
-          {/* Password Input */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300">Password</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-3 py-2 mt-1 text-white bg-gray-700 border border-gray-600 rounded-md"/>
-          </div>
-
-          <div className="text-right text-sm">
-            <Link to="/forgotpassword" className="font-medium text-blue-400 hover:underline">Forgot Password?</Link>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+            <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-3 py-2 mt-1 text-text-dark bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"/>
           </div>
           
-          <button type="submit" disabled={isLoading} className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-gray-500">
+          {/* Forgot Password Link Added Here */}
+          <div className="text-right text-sm">
+            <Link to="/forgotpassword" className="font-medium text-primary hover:underline">
+              Forgot Password?
+            </Link>
+          </div>
+          
+          <button type="submit" disabled={isLoading} className="w-full px-4 py-2 font-semibold text-white bg-primary rounded-md hover:bg-primary-hover transition-colors disabled:bg-gray-400">
             {isLoading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
-
         <div className="text-center">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-600">
             New Customer?{' '}
-            <Link to="/register" className="font-medium text-blue-400 hover:underline">Register</Link>
+            <Link to="/register" className="font-medium text-primary hover:underline">Register</Link>
           </p>
         </div>
       </div>

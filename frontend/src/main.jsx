@@ -19,10 +19,10 @@ import App from './App.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import AdminRoute from './components/AdminRoute.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
-import LoginScreen from './screens/LoginScreen.jsx';
-import RegisterScreen from './screens/RegisterScreen.jsx';
 import ProductScreen from './screens/ProductScreen.jsx';
 import CartScreen from './screens/CartScreen.jsx';
+import LoginScreen from './screens/LoginScreen.jsx';
+import RegisterScreen from './screens/RegisterScreen.jsx';
 import ShippingScreen from './screens/ShippingScreen.jsx';
 import PaymentScreen from './screens/PaymentScreen.jsx';
 import PlaceOrderScreen from './screens/PlaceOrderScreen.jsx';
@@ -31,6 +31,10 @@ import ProfileScreen from './screens/ProfileScreen.jsx';
 import WishlistScreen from './screens/WishlistScreen.jsx';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen.jsx';
 import ResetPasswordScreen from './screens/ResetPasswordScreen.jsx';
+import ShopAllScreen from './screens/ShopAllScreen.jsx';
+import FAQScreen from './screens/FAQScreen.jsx';
+import ContactScreen from './screens/ContactScreen.jsx';
+
 // Admin Screens
 import DashboardScreen from './screens/admin/DashboardScreen.jsx';
 import ProductListScreen from './screens/admin/ProductListScreen.jsx';
@@ -43,8 +47,8 @@ const router = createBrowserRouter(
     <Route path="/" element={<App />}>
       {/* Public Routes */}
       <Route index={true} path="/" element={<HomeScreen />} />
-      <Route path="/search/:keyword" element={<HomeScreen />} />
       <Route path="/page/:pageNumber" element={<HomeScreen />} />
+      <Route path="/search/:keyword" element={<HomeScreen />} />
       <Route path="/search/:keyword/page/:pageNumber" element={<HomeScreen />} />
       <Route path="/product/:id" element={<ProductScreen />} />
       <Route path="/cart" element={<CartScreen />} />
@@ -52,6 +56,10 @@ const router = createBrowserRouter(
       <Route path="/register" element={<RegisterScreen />} />
       <Route path="/forgotpassword" element={<ForgotPasswordScreen />} />
       <Route path="/resetpassword/:resettoken" element={<ResetPasswordScreen />} />
+      <Route path="/products" element={<ShopAllScreen />} />
+      <Route path="/products/page/:pageNumber" element={<ShopAllScreen />} />
+      <Route path="/faq" element={<FAQScreen />} />
+      <Route path="/contact" element={<ContactScreen />} />
 
       {/* Private User Routes */}
       <Route path="" element={<PrivateRoute />}>

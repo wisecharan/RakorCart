@@ -22,7 +22,7 @@ const OrderScreen = () => {
 
   useEffect(() => {
     if (!errorPayPal && !loadingPayPal && paypal.clientId) {
-      const loadPayPalScript = async () => {
+      const loadPayPalScript = () => {
         paypalDispatch({
           type: 'resetOptions',
           value: { 'client-id': paypal.clientId, currency: 'USD' },
@@ -76,35 +76,37 @@ const OrderScreen = () => {
   ) : error ? (
     <p className="text-red-500">{error?.data?.message || error.error}</p>
   ) : (
-    <div className="container mx-auto mt-10 text-white">
-      <h1 className="text-3xl font-bold mb-6">Order {order._id}</h1>
+    <div className="container mx-auto mt-10 text-text-dark">
+      <h1 className="text-3xl font-bold mb-6">Order Details</h1>
+      <p className="text-gray-500 mb-6">Order ID: {order._id}</p>
+      
       <div className="grid md:grid-cols-3 gap-8">
         {/* Left Column: Details */}
         <div className="md:col-span-2 space-y-6">
-          <div className="bg-gray-800 p-6 rounded-lg">
+          <div className="bg-white p-6 rounded-lg shadow-md border border-border-light">
             <h2 className="text-2xl font-bold mb-4">Shipping</h2>
             <p><strong>Name: </strong> {order.user ? order.user.name : 'Guest'}</p>
-            <p><strong>Email: </strong> {order.user ? <a href={`mailto:${order.user.email}`}>{order.user.email}</a> : order.shippingAddress.email}</p>
+            <p><strong>Email: </strong> {order.user ? <a href={`mailto:${order.user.email}`} className="text-primary hover:underline">{order.user.email}</a> : order.shippingAddress.email}</p>
             <p><strong>Address: </strong>{order.shippingAddress.address}, {order.shippingAddress.city}{' '}{order.shippingAddress.postalCode}, {order.shippingAddress.country}</p>
-            {order.isDelivered ? ( <p className="mt-4 p-2 bg-green-700 rounded">Delivered on {new Date(order.deliveredAt).toLocaleDateString()}</p> ) : ( <p className="mt-4 p-2 bg-red-700 rounded">Not Delivered</p> )}
+            {order.isDelivered ? ( <p className="mt-4 p-2 bg-green-100 text-green-800 rounded-md">Delivered on {new Date(order.deliveredAt).toLocaleDateString()}</p> ) : ( <p className="mt-4 p-2 bg-red-100 text-red-800 rounded-md">Not Delivered</p> )}
           </div>
-          <div className="bg-gray-800 p-6 rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Payment Method</h2>
+
+          <div className="bg-white p-6 rounded-lg shadow-md border border-border-light">
+            <h2 className="text-2xl font-bold mb-4">Payment</h2>
             <p><strong>Method: </strong> {order.paymentMethod}</p>
-            {order.isPaid ? ( <p className="mt-4 p-2 bg-green-700 rounded">Paid on {new Date(order.paidAt).toLocaleDateString()}</p> ) : ( <p className="mt-4 p-2 bg-red-700 rounded">Not Paid</p> )}
+            {order.isPaid ? ( <p className="mt-4 p-2 bg-green-100 text-green-800 rounded-md">Paid on {new Date(order.paidAt).toLocaleDateString()}</p> ) : ( <p className="mt-4 p-2 bg-red-100 text-red-800 rounded-md">Not Paid</p> )}
           </div>
-          <div className="bg-gray-800 p-6 rounded-lg">
+
+          <div className="bg-white p-6 rounded-lg shadow-md border border-border-light">
             <h2 className="text-2xl font-bold mb-4">Order Items</h2>
             <div className="space-y-4">
               {order.orderItems.map((item, index) => (
-                <div key={index} className="flex justify-between items-center">
+                <div key={index} className="flex justify-between items-center border-b border-border-light pb-2 last:border-b-0">
                   <div className="flex items-center">
                     <img src={item.image} alt={item.name} className="w-12 h-12 rounded mr-4" />
-                    <Link to={`/product/${item.product}`} className="hover:underline">{item.name}</Link>
+                    <Link to={`/product/${item.product}`} className="hover:underline font-semibold">{item.name}</Link>
                   </div>
-                  <div>
-                    {item.qty} x ${item.price} = ${(item.qty * item.price).toFixed(2)}
-                  </div>
+                  <div className="text-gray-700">{item.qty} x ${item.price} = ${(item.qty * item.price).toFixed(2)}</div>
                 </div>
               ))}
             </div>
@@ -112,28 +114,23 @@ const OrderScreen = () => {
         </div>
 
         {/* Right Column: Order Summary */}
-        <div className="bg-gray-800 p-6 rounded-lg h-fit">
-          <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
+        <div className="bg-white p-6 rounded-lg shadow-md h-fit sticky top-24 border border-border-light">
+          <h2 className="text-2xl font-bold mb-4 border-b border-border-light pb-4">Order Summary</h2>
           <div className="space-y-2">
-            <div className="flex justify-between"><p>Items:</p> <p>${order.itemsPrice}</p></div>
-            <div className="flex justify-between"><p>Shipping:</p> <p>${order.shippingPrice}</p></div>
-            <div className="flex justify-between"><p>Tax:</p> <p>${order.taxPrice}</p></div>
+            <div className="flex justify-between"><p className="text-gray-600">Items:</p> <p className="font-semibold">${order.itemsPrice}</p></div>
+            <div className="flex justify-between"><p className="text-gray-600">Shipping:</p> <p className="font-semibold">${order.shippingPrice}</p></div>
+            <div className="flex justify-between"><p className="text-gray-600">Tax:</p> <p className="font-semibold">${order.taxPrice}</p></div>
             {order.discountPrice > 0 && (
-              <div className="flex justify-between text-green-400">
-                <p>Discount:</p>
-                <p>-${order.discountPrice.toFixed(2)}</p>
-              </div>
+              <div className="flex justify-between text-green-600"><p>Discount:</p><p className="font-semibold">-${order.discountPrice.toFixed(2)}</p></div>
             )}
-            <div className="flex justify-between font-bold text-lg border-t border-gray-700 pt-2 mt-2"><p>Total:</p> <p>${order.totalPrice}</p></div>
+            <div className="flex justify-between font-bold text-xl border-t border-border-light pt-4 mt-4"><p>Total:</p> <p>${order.totalPrice}</p></div>
           </div>
           
           {!order.isPaid && (
             <div className="mt-4">
               {loadingPay && <p>Loading Payment...</p>}
               {isPending ? <p>Loading PayPal...</p> : (
-                <div>
-                  <PayPalButtons createOrder={createOrder} onApprove={onApprove} onError={onError}></PayPalButtons>
-                </div>
+                <div><PayPalButtons createOrder={createOrder} onApprove={onApprove} onError={onError}></PayPalButtons></div>
               )}
             </div>
           )}
@@ -141,7 +138,7 @@ const OrderScreen = () => {
           {loadingDeliver && <p>Loading...</p>}
           {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
             <div className="mt-4">
-              <button type="button" className="w-full bg-green-600 font-bold py-3 rounded-lg hover:bg-green-700" onClick={deliverOrderHandler}>
+              <button type="button" className="w-full bg-green-600 text-white font-bold py-3 rounded-md hover:bg-green-700" onClick={deliverOrderHandler}>
                 Mark As Delivered
               </button>
             </div>

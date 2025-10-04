@@ -42,29 +42,29 @@ const ProfileScreen = () => {
   };
 
   return (
-    <div className="container mx-auto mt-10 text-white grid md:grid-cols-3 gap-8">
+    <div className="container mx-auto mt-10 text-text-dark grid md:grid-cols-3 gap-8">
       {/* Left Column: User Profile Form */}
       <div className="md:col-span-1">
         <h2 className="text-3xl font-bold mb-4">User Profile</h2>
-        <form onSubmit={submitHandler} className="space-y-4 bg-gray-800 p-6 rounded-lg">
+        <form onSubmit={submitHandler} className="space-y-4 bg-white p-6 rounded-lg shadow-md border border-border-light">
           <div>
-            <label className="block text-sm font-medium text-gray-300">Name</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2 mt-1 bg-gray-700 border border-gray-600 rounded-md"/>
+            <label className="block text-sm font-medium text-gray-700">Name</label>
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2 mt-1 bg-gray-50 border border-gray-300 rounded-md"/>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300">Email Address</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 mt-1 bg-gray-700 border border-gray-600 rounded-md"/>
+            <label className="block text-sm font-medium text-gray-700">Email Address</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 mt-1 bg-gray-50 border border-gray-300 rounded-md"/>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300">Password</label>
-            <input type="password" placeholder="Enter new password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-3 py-2 mt-1 bg-gray-700 border border-gray-600 rounded-md"/>
+            <label className="block text-sm font-medium text-gray-700">New Password</label>
+            <input type="password" placeholder="Enter new password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-3 py-2 mt-1 bg-gray-50 border border-gray-300 rounded-md"/>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300">Confirm Password</label>
-            <input type="password" placeholder="Confirm new password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-3 py-2 mt-1 bg-gray-700 border border-gray-600 rounded-md"/>
+            <label className="block text-sm font-medium text-gray-700">Confirm New Password</label>
+            <input type="password" placeholder="Confirm new password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-3 py-2 mt-1 bg-gray-50 border border-gray-300 rounded-md"/>
           </div>
-          <button type="submit" className="w-full py-2 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700">
-            {loadingUpdate ? 'Updating...' : 'Update'}
+          <button type="submit" className="w-full py-2 font-semibold text-white bg-primary rounded-md hover:bg-primary-hover">
+            {loadingUpdate ? 'Updating...' : 'Update Profile'}
           </button>
         </form>
       </div>
@@ -77,41 +77,33 @@ const ProfileScreen = () => {
         ) : error ? (
           <p className="text-red-500">{error?.data?.message || error.error}</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-gray-800">
-              <thead>
-                <tr className="bg-gray-700">
-                  <th className="py-2 px-4 text-left">ID</th>
-                  <th className="py-2 px-4 text-left">DATE</th>
-                  <th className="py-2 px-4 text-left">TOTAL</th>
-                  <th className="py-2 px-4 text-left">PAID</th>
-                  <th className="py-2 px-4 text-left">DELIVERED</th>
-                  <th className="py-2 px-4"></th>
+          <div className="overflow-x-auto bg-white rounded-lg shadow-md border border-border-light">
+            <table className="min-w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                  <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DATE</th>
+                  <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TOTAL</th>
+                  <th className="py-3 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">PAID</th>
+                  <th className="py-3 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">DELIVERED</th>
+                  <th className="py-3 px-4"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-200">
                 {orders.map((order) => (
-                  <tr key={order._id} className="border-b border-gray-700 hover:bg-gray-700">
-                    <td className="py-2 px-4">{order._id}</td>
-                    <td className="py-2 px-4">{order.createdAt.substring(0, 10)}</td>
-                    <td className="py-2 px-4">${order.totalPrice}</td>
-                    <td className="py-2 px-4 text-center">
-                      {order.isPaid ? (
-                        order.paidAt.substring(0, 10)
-                      ) : (
-                        <FaTimes className="text-red-500 mx-auto" />
-                      )}
+                  <tr key={order._id} className="hover:bg-gray-50">
+                    <td className="py-3 px-4 text-sm">{order._id}</td>
+                    <td className="py-3 px-4 text-sm">{new Date(order.createdAt).toLocaleDateString()}</td>
+                    <td className="py-3 px-4 text-sm">${order.totalPrice}</td>
+                    <td className="py-3 px-4 text-center text-sm">
+                      {order.isPaid ? new Date(order.paidAt).toLocaleDateString() : <FaTimes className="text-red-500 mx-auto" />}
                     </td>
-                    <td className="py-2 px-4 text-center">
-                      {order.isDelivered ? (
-                        order.deliveredAt.substring(0, 10)
-                      ) : (
-                        <FaTimes className="text-red-500 mx-auto" />
-                      )}
+                    <td className="py-3 px-4 text-center text-sm">
+                      {order.isDelivered ? new Date(order.deliveredAt).toLocaleDateString() : <FaTimes className="text-red-500 mx-auto" />}
                     </td>
-                    <td className="py-2 px-4">
+                    <td className="py-3 px-4 text-sm">
                       <Link to={`/order/${order._id}`}>
-                        <button className="bg-gray-600 text-white text-sm py-1 px-2 rounded hover:bg-gray-500">
+                        <button className="bg-gray-200 text-gray-700 text-xs py-1 px-3 rounded hover:bg-gray-300">
                           Details
                         </button>
                       </Link>

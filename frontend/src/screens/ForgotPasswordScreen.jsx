@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useForgotPasswordMutation } from '../slices/usersApiSlice';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState('');
@@ -17,16 +18,29 @@ const ForgotPasswordScreen = () => {
   };
 
   return (
-    <div className="flex justify-center items-center mt-20">
-      <div className="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold text-center text-white">Forgot Password</h1>
-        <p className="text-center text-gray-400">Enter your email to receive a password reset link.</p>
+    <div className="flex justify-center items-start mt-20">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md border border-border-light">
+        <h1 className="text-3xl font-bold text-center text-text-dark">Forgot Password</h1>
+        <p className="text-center text-gray-600">
+          Enter your email address and we will send you a link to reset your password.
+        </p>
         <form onSubmit={submitHandler} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300">Email Address</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full px-3 py-2 mt-1 text-white bg-gray-700 border border-gray-600 rounded-md"/>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-3 py-2 mt-1 text-text-dark bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            />
           </div>
-          <button type="submit" disabled={isLoading} className="w-full py-2 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-gray-500">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-2 font-semibold text-white bg-primary rounded-md hover:bg-primary-hover disabled:bg-gray-400"
+          >
             {isLoading ? 'Sending...' : 'Send Reset Link'}
           </button>
         </form>

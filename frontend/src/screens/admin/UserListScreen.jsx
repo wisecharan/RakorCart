@@ -20,39 +20,32 @@ const UserListScreen = () => {
   };
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold my-4 text-white">Users</h1>
+    <div className="container mx-auto px-4 text-text-dark">
+      <h1 className="text-3xl font-bold my-6">Users</h1>
       {loadingDelete && <p>Deleting...</p>}
       {isLoading ? ( <p>Loading...</p> ) : error ? ( <p className="text-red-500">{error?.data?.message || error.error}</p> ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-gray-800 text-white">
-            <thead>
-              <tr className="bg-gray-700">
-                <th className="py-2 px-4 text-left">ID</th>
-                <th className="py-2 px-4 text-left">NAME</th>
-                <th className="py-2 px-4 text-left">EMAIL</th>
-                <th className="py-2 px-4 text-center">ADMIN</th>
-                <th className="py-2 px-4"></th>
+        <div className="overflow-x-auto bg-white rounded-lg shadow-md border border-border-light">
+          <table className="min-w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase">NAME</th>
+                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase">EMAIL</th>
+                <th className="py-3 px-4 text-center text-xs font-medium text-gray-500 uppercase">ADMIN</th>
+                <th className="py-3 px-4"></th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-200">
               {users.map((user) => (
-                <tr key={user._id} className="border-b border-gray-700 hover:bg-gray-700">
-                  <td className="py-2 px-4">{user._id}</td>
-                  <td className="py-2 px-4">{user.name}</td>
-                  <td className="py-2 px-4"><a href={`mailto:${user.email}`}>{user.email}</a></td>
-                  <td className="py-2 px-4 text-center">
-                    {user.isAdmin ? (
-                      <FaCheck className="text-green-500 mx-auto" />
-                    ) : (
-                      <FaTimes className="text-red-500 mx-auto" />
-                    )}
+                <tr key={user._id} className="hover:bg-gray-50">
+                  <td className="py-3 px-4 text-sm font-medium">{user._id}</td>
+                  <td className="py-3 px-4 text-sm">{user.name}</td>
+                  <td className="py-3 px-4 text-sm"><a href={`mailto:${user.email}`} className="text-primary hover:underline">{user.email}</a></td>
+                  <td className="py-3 px-4 text-center">
+                    {user.isAdmin ? ( <FaCheck className="text-green-500 mx-auto" /> ) : ( <FaTimes className="text-red-500 mx-auto" /> )}
                   </td>
-                  <td className="py-2 px-4">
-                    <button
-                      onClick={() => deleteHandler(user._id)}
-                      className="text-red-500 hover:text-red-400"
-                    >
+                  <td className="py-3 px-4 text-right">
+                    <button onClick={() => deleteHandler(user._id)} className="text-gray-500 hover:text-red-500">
                       <FaTrash />
                     </button>
                   </td>

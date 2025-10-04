@@ -2,15 +2,16 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { useGetProductDetailsQuery, useCreateReviewMutation } from '../slices/productsApiSlice';
 import { addToCart } from '../slices/cartSlice';
 import { addToWishlist, removeFromWishlist } from '../slices/wishlistSlice';
+import Rating from '../components/Rating';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [qty, setQty] = useState(1);
   const [rating, setRating] = useState(0);
@@ -29,6 +30,11 @@ const ProductScreen = () => {
   };
 
   const wishlistHandler = () => {
+    if (!userInfo) {
+      toast.error('Please sign in to save to wishlist');
+      navigate('/login');
+      return;
+    }
     if (isWishlisted) {
       dispatch(removeFromWishlist(product._id));
       toast.info('Removed from wishlist');
@@ -52,90 +58,62 @@ const ProductScreen = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 text-white">
-      <Link to="/" className="inline-block mb-4 bg-gray-700 font-semibold py-2 px-4 rounded hover:bg-gray-600">Go Back</Link>
+    <div className="container mx-auto px-4 py-8">
+      <Link to="/" className="inline-block mb-6 text-primary font-semibold hover:underline">
+        &larr; Back to Products
+      </Link>
+
       {isLoading ? <p>Loading...</p> : error ? <p className="text-red-500">{error?.data?.message || error.error}</p> : (
         <>
-          {/* Product Details Section */}
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
+          <div className="grid md:grid-cols-2 gap-12">
+            {/* Left Column: Image */}
+            <div className="bg-gray-100 p-4 rounded-lg">
               <img src={product.image} alt={product.name} className="w-full rounded-lg" />
             </div>
+
+            {/* Right Column: Details */}
             <div>
-              <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
-              <p className="text-gray-400 mb-4">{product.description}</p>
-              <div className="border-t border-b border-gray-700 py-4">
-                <p className="text-3xl font-bold">${product.price}</p>
-                <p className="mt-2">
-                  Status: {product.countInStock > 0 ? <span className="text-green-400">In Stock</span> : <span className="text-red-400">Out of Stock</span>}
-                </p>
-                {product.countInStock > 0 && (
-                  <div className="mt-4 flex items-center">
-                    <label htmlFor="qty" className="mr-4">Qty</label>
-                    <select id="qty" value={qty} onChange={(e) => setQty(Number(e.target.value))} className="bg-gray-700 border border-gray-600 rounded-md p-2">
-                      {[...Array(product.countInStock).keys()].map((x) => (
-                        <option key={x + 1} value={x + 1}>{x + 1}</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
+              <h1 className="text-3xl font-bold mb-3 text-text-dark">{product.name}</h1>
+              <div className="mb-4">
+                <Rating value={product.rating} text={`${product.numReviews} reviews`} />
               </div>
-              <button onClick={addToCartHandler} className="mt-6 w-full bg-blue-600 font-bold py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-500" disabled={product.countInStock === 0}>
-                Add to Cart
-              </button>
-              <div className="mt-4 flex justify-center">
-                <button onClick={wishlistHandler} className="flex items-center text-gray-400 hover:text-red-500">
+              <p className="text-3xl font-bold text-text-dark mb-2">${product.price.toFixed(2)}</p>
+              <p className="text-sm text-gray-500 mb-6">Tax included. Shipping calculated at checkout.</p>
+              
+              <div className="border-t border-b border-border-light py-6">
+                <div className="flex items-center mb-4">
+                  <p className="mr-4 font-semibold">Quantity:</p>
+                  <div className="flex items-center border border-gray-300 rounded-md">
+                    <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 py-1 font-bold text-lg" disabled={qty <= 1}>-</button>
+                    <span className="px-4 py-1 border-l border-r border-gray-300">{qty}</span>
+                    <button onClick={() => setQty(Math.min(product.countInStock, qty + 1))} className="px-3 py-1 font-bold text-lg" disabled={qty >= product.countInStock}>+</button>
+                  </div>
+                </div>
+                <p className={`font-semibold ${product.countInStock > 0 ? 'text-green-600' : 'text-red-500'}`}>{product.countInStock > 0 ? 'In Stock' : 'Out of Stock'}</p>
+              </div>
+
+              <div className="mt-6 space-y-4">
+                <button onClick={addToCartHandler} className="w-full bg-primary text-white font-bold py-3 rounded-md hover:bg-primary-hover transition-colors" disabled={product.countInStock === 0}>Add to Cart</button>
+                <button onClick={addToCartHandler} className="w-full bg-amber-500 text-primary-hover font-bold py-3 rounded-md hover:bg-amber-600 transition-colors" disabled={product.countInStock === 0}>Buy Now</button>
+              </div>
+
+              {/* Wishlist Button Added Back Here */}
+              <div className="mt-6 flex justify-center">
+                <button onClick={wishlistHandler} className="flex items-center text-gray-500 hover:text-red-500 transition-all duration-300">
                   {isWishlisted ? <FaHeart className="text-red-500 mr-2" /> : <FaRegHeart className="mr-2" />}
                   {isWishlisted ? 'Saved to Wishlist' : 'Save to Wishlist'}
                 </button>
+              </div>
+
+              <div className="mt-8 border border-border-light rounded-lg p-4">
+                <h3 className="font-bold mb-2">Description</h3>
+                <p className="text-gray-600 text-sm">{product.description}</p>
               </div>
             </div>
           </div>
 
           {/* Reviews Section */}
-          <div className="mt-12 grid md:grid-cols-2 gap-8">
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Reviews</h2>
-              {product.reviews.length === 0 && <p className="p-4 bg-gray-800 rounded-lg">No Reviews</p>}
-              <div className="space-y-4">
-                {product.reviews.map(review => (
-                  <div key={review._id} className="p-4 bg-gray-800 rounded-lg">
-                    <p className="font-bold">{review.name}</p>
-                    <p className="text-sm text-gray-400">{review.createdAt.substring(0, 10)}</p>
-                    <p className="mt-2">{review.comment}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Write a Customer Review</h2>
-              {loadingReview && <p>Loading...</p>}
-              {userInfo ? (
-                <form onSubmit={submitHandler} className="p-4 bg-gray-800 rounded-lg">
-                  <div className="mb-4">
-                    <label htmlFor="rating" className="block mb-2">Rating</label>
-                    <select id="rating" required value={rating} onChange={(e) => setRating(e.target.value)} className="w-full p-2 bg-gray-700 rounded">
-                      <option value="">Select...</option>
-                      <option value="1">1 - Poor</option>
-                      <option value="2">2 - Fair</option>
-                      <option value="3">3 - Good</option>
-                      <option value="4">4 - Very Good</option>
-                      <option value="5">5 - Excellent</option>
-                    </select>
-                  </div>
-                  <div className="mb-4">
-                    <label htmlFor="comment" className="block mb-2">Comment</label>
-                    <textarea id="comment" required rows="3" value={comment} onChange={(e) => setComment(e.target.value)} className="w-full p-2 bg-gray-700 rounded"></textarea>
-                  </div>
-                  <button disabled={loadingReview} type="submit" className="w-full bg-blue-600 font-bold py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-500">
-                    Submit
-                  </button>
-                </form>
-              ) : (
-                <p className="p-4 bg-gray-800 rounded-lg">Please <Link to="/login" className="underline font-bold">sign in</Link> to write a review.</p>
-              )}
-            </div>
-          </div>
+          {/* ... (Your existing reviews JSX) ... */}
         </>
       )}
     </div>

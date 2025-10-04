@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux'; // Corrected import
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { savePaymentMethod } from '../slices/cartSlice';
 import CheckoutSteps from '../components/CheckoutSteps';
@@ -11,7 +11,7 @@ const PaymentScreen = () => {
   const cart = useSelector((state) => state.cart);
   const { shippingAddress } = cart;
 
-  // Redirect to shipping if address is not set
+  // Redirect to shipping page if the address is missing
   useEffect(() => {
     if (!shippingAddress?.address) {
       navigate('/shipping');
@@ -27,29 +27,32 @@ const PaymentScreen = () => {
   };
 
   return (
-    <div className="flex justify-center items-center mt-10">
-      <div className="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-lg shadow-md">
+    <div className="flex justify-center items-start mt-10">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md border border-border-light">
         <CheckoutSteps step1 step2 step3 />
-        <h1 className="text-3xl font-bold text-center text-white">Payment Method</h1>
+        <h1 className="text-3xl font-bold text-center text-text-dark">Payment Method</h1>
         <form onSubmit={submitHandler}>
-          <div className="space-y-4">
-            <label className="block text-lg font-medium text-gray-300">Select Method</label>
-            <div className="flex items-center">
-              <input
-                type="radio"
-                id="PayPal"
-                name="paymentMethod"
-                value="PayPal"
-                checked
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-              />
-              <label htmlFor="PayPal" className="ml-3 block text-sm font-medium text-white">
-                PayPal or Credit Card
-              </label>
+          <fieldset className="mt-4">
+            <legend className="block text-lg font-medium text-gray-700">Select Method</legend>
+            <div className="mt-4 space-y-4">
+              <div className="flex items-center p-4 border border-gray-300 rounded-md bg-gray-50">
+                <input
+                  type="radio"
+                  id="PayPal"
+                  name="paymentMethod"
+                  value="PayPal"
+                  checked
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  className="h-4 w-4 text-primary focus:ring-primary border-gray-300"
+                />
+                <label htmlFor="PayPal" className="ml-3 block text-sm font-medium text-text-dark">
+                  PayPal or Credit Card
+                </label>
+              </div>
+              {/* You can add more payment options here in the same format */}
             </div>
-          </div>
-          <button type="submit" className="w-full py-2 mt-6 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700">
+          </fieldset>
+          <button type="submit" className="w-full py-2 mt-6 font-semibold text-white bg-primary rounded-md hover:bg-primary-hover transition-colors">
             Continue
           </button>
         </form>
