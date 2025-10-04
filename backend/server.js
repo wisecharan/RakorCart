@@ -8,6 +8,7 @@ import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import couponRoutes from './routes/couponRoutes.js';
 
 
 dotenv.config();
@@ -34,6 +35,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/coupons', couponRoutes);
 
 // 2. Define __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);

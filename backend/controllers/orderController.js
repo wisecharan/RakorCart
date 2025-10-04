@@ -2,7 +2,7 @@ import Order from '../models/orderModel.js';
 
 // @desc    Create new order
 // @route   POST /api/orders
-// @access  Private
+// @access  Public (but user identified if logged in)
 const addOrderItems = async (req, res) => {
   const {
     orderItems,
@@ -11,6 +11,7 @@ const addOrderItems = async (req, res) => {
     itemsPrice,
     taxPrice,
     shippingPrice,
+    discountPrice, // Added to handle coupon discounts
     totalPrice,
   } = req.body;
 
@@ -22,14 +23,15 @@ const addOrderItems = async (req, res) => {
       orderItems: orderItems.map((x) => ({
         ...x,
         product: x._id,
-        _id: undefined
+        _id: undefined,
       })),
-      user: req.user._id,
+      user: req.user ? req.user._id : null, // Handles both guests and logged-in users
       shippingAddress,
       paymentMethod,
       itemsPrice,
       taxPrice,
       shippingPrice,
+      discountPrice, // Saves the discount amount to the order
       totalPrice,
     });
 

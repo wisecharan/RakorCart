@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const orderSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     orderItems: [
       {
         name: { type: String, required: true },
@@ -32,6 +32,7 @@ const orderSchema = new mongoose.Schema(
     itemsPrice: { type: Number, required: true, default: 0.0 },
     taxPrice: { type: Number, required: true, default: 0.0 },
     shippingPrice: { type: Number, required: true, default: 0.0 },
+    discountPrice: { type: Number, required: true, default: 0.0 },
     totalPrice: { type: Number, required: true, default: 0.0 },
     isPaid: { type: Boolean, required: true, default: false },
     paidAt: { type: Date },

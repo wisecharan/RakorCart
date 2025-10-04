@@ -11,7 +11,6 @@ const store = configureStore({
     wishlist: wishlistReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
-  // The middleware should only contain the single, central apiSlice.middleware
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware),
   devTools: true,
