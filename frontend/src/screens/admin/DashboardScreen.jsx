@@ -11,21 +11,32 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
+// A reusable card component for displaying stats
+const StatCard = ({ title, value }) => (
+  <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+    <h3 className="text-sm font-medium text-gray-500">{title}</h3>
+    <p className="text-3xl font-bold text-gray-800 mt-2">{value}</p>
+  </div>
+);
+
 const DashboardScreen = () => {
   const { data: orders, isLoading: loadingOrders } = useGetOrdersQuery();
   const { data: users, isLoading: loadingUsers } = useGetUsersQuery();
 
-  // Calculate stats
-  const totalSales = orders ? orders.reduce((acc, order) => acc + order.totalPrice, 0) : 0;
+  // --- Real-time Calculations ---
+  const totalRevenue = orders ? orders.reduce((acc, order) => acc + order.totalPrice, 0) : 0;
   const totalOrders = orders ? orders.length : 0;
-  const totalUsers = users ? users.length : 0;
-  
-  // Prepare data for the chart (sales per day)
+  const avgOrderValue = totalOrders > 0 ? (totalRevenue / totalOrders) : 0;
+  // Using total orders as a proxy for shipments for now
+  const totalShipments = totalOrders; 
+
+  // Format numbers for display
+  const formatCurrency = (amount) => `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  // Prepare data for the chart
   const salesData = orders ? orders.reduce((acc, order) => {
     const date = new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    if (!acc[date]) {
-      acc[date] = 0;
-    }
+    if (!acc[date]) { acc[date] = 0; }
     acc[date] += order.totalPrice;
     return acc;
   }, {}) : {};
@@ -36,40 +47,37 @@ const DashboardScreen = () => {
   })).sort((a, b) => new Date(a.date) - new Date(b.date));
 
   return (
-    <div className="container mx-auto px-4 py-8 text-text-dark">
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+    <div className="text-text-dark">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <p className="text-gray-500">An overview of your store's performance.</p>
+      </div>
 
       {loadingOrders || loadingUsers ? <p>Loading stats...</p> : (
         <>
-          {/* Stat Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white p-6 rounded-lg shadow-md border border-border-light">
-              <h3 className="text-lg font-semibold text-gray-500">Total Sales</h3>
-              <p className="text-4xl font-bold mt-2">${totalSales.toFixed(2)}</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md border border-border-light">
-              <h3 className="text-lg font-semibold text-gray-500">Total Orders</h3>
-              <p className="text-4xl font-bold mt-2">{totalOrders}</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md border border-border-light">
-              <h3 className="text-lg font-semibold text-gray-500">Total Users</h3>
-              <p className="text-4xl font-bold mt-2">{totalUsers}</p>
-            </div>
+            <StatCard title="Total Revenue" value={formatCurrency(totalRevenue)} />
+            <StatCard title="Avg. Order Value" value={formatCurrency(avgOrderValue)} />
+            <StatCard title="Total Shipments" value={totalShipments.toLocaleString('en-US')} />
           </div>
 
-          {/* Sales Chart */}
-          <div className="bg-white p-6 rounded-lg shadow-md border border-border-light">
-            <h3 className="text-xl font-semibold mb-4">Sales Over Time</h3>
-            <ResponsiveContainer width="100%" height={400}>
-              <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E0D8CC" />
-                <XAxis dataKey="date" stroke="#6B7280" />
-                <YAxis stroke="#6B7280" />
-                <Tooltip contentStyle={{ backgroundColor: '#FFFFFF', border: '1px solid #E0D8CC' }} />
+          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 mb-8">
+            <h3 className="text-lg font-semibold mb-4">Transaction Activity</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                <XAxis dataKey="date" stroke="#9ca3af" fontSize={12} />
+                <YAxis stroke="#9ca3af" fontSize={12} tickFormatter={(value) => `$${value/1000}K`} />
+                <Tooltip formatter={(value) => formatCurrency(value)} />
                 <Legend />
-                <Line type="monotone" dataKey="Sales" stroke="#6B5B4B" strokeWidth={2} activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="Sales" stroke="#8884d8" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+             <h3 className="text-lg font-semibold mb-4">Customer Details</h3>
+             <p className="text-gray-500">Recent customer orders will be displayed here.</p>
           </div>
         </>
       )}

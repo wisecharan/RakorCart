@@ -17,7 +17,12 @@ const LoginScreen = () => {
 
   useEffect(() => {
     if (userInfo) {
-      navigate('/');
+      // If user is already logged in, redirect them
+      if (userInfo.isAdmin) {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/');
+      }
     }
   }, [navigate, userInfo]);
 
@@ -26,7 +31,13 @@ const LoginScreen = () => {
     try {
       const res = await login({ email, password }).unwrap(); 
       dispatch(setCredentials({ ...res }));
-      navigate('/');
+      
+      // Redirect based on user role after login
+      if (res.isAdmin) {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
@@ -46,7 +57,6 @@ const LoginScreen = () => {
             <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-3 py-2 mt-1 text-text-dark bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"/>
           </div>
           
-          {/* Forgot Password Link Added Here */}
           <div className="text-right text-sm">
             <Link to="/forgotpassword" className="font-medium text-primary hover:underline">
               Forgot Password?

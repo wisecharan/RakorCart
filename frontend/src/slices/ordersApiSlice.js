@@ -13,7 +13,7 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
       query: (orderId) => ({
         url: `/api/orders/${orderId}`,
       }),
-      providesTags: ['Order'], // Provides a tag for this specific order
+      providesTags: ['Order'],
       keepUnusedDataFor: 5,
     }),
     payOrder: builder.mutation({
@@ -22,7 +22,7 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
         method: 'PUT',
         body: { ...details },
       }),
-      invalidatesTags: ['Order'], // Invalidates the order cache after payment
+      invalidatesTags: ['Order'],
     }),
     getPayPalClientId: builder.query({
       query: () => ({ url: '/api/config/paypal' }),
@@ -30,20 +30,21 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
     }),
     getMyOrders: builder.query({
       query: () => ({ url: `/api/orders/myorders` }),
-      providesTags: ['Order'], // Provides tags for the user's list of orders
+      providesTags: ['Order'],
       keepUnusedDataFor: 5,
     }),
     getOrders: builder.query({
       query: () => ({ url: '/api/orders' }),
-      providesTags: ['Order'], // Provides tags for the admin's list of all orders
+      providesTags: ['Order'],
       keepUnusedDataFor: 5,
     }),
-    deliverOrder: builder.mutation({
-      query: (orderId) => ({
-        url: `/api/orders/${orderId}/deliver`,
+    updateOrderStatus: builder.mutation({
+      query: ({ orderId, status }) => ({
+        url: `/api/orders/${orderId}/status`,
         method: 'PUT',
+        body: { status },
       }),
-      invalidatesTags: ['Order'], // Invalidates the order cache after delivery
+      invalidatesTags: ['Order'],
     }),
   }),
 });
@@ -55,5 +56,5 @@ export const {
   useGetPayPalClientIdQuery,
   useGetMyOrdersQuery,
   useGetOrdersQuery,
-  useDeliverOrderMutation,
+  useUpdateOrderStatusMutation, // This is the correct hook
 } = ordersApiSlice;

@@ -7,18 +7,15 @@ import {
   useGetOrderDetailsQuery,
   usePayOrderMutation,
   useGetPayPalClientIdQuery,
-  useDeliverOrderMutation,
-} from '../slices/ordersApiSlice';
+} from '../slices/ordersApiSlice'; // Removed useDeliverOrderMutation
 
 const OrderScreen = () => {
   const { id: orderId } = useParams();
   const { data: order, refetch, isLoading, error } = useGetOrderDetailsQuery(orderId);
 
   const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
-  const [deliverOrder, { isLoading: loadingDeliver }] = useDeliverOrderMutation();
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const { data: paypal, isLoading: loadingPayPal, error: errorPayPal } = useGetPayPalClientIdQuery();
-  const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (!errorPayPal && !loadingPayPal && paypal.clientId) {
@@ -61,16 +58,6 @@ const OrderScreen = () => {
     });
   }
 
-  const deliverOrderHandler = async () => {
-    try {
-      await deliverOrder(orderId);
-      refetch();
-      toast.success('Order marked as delivered');
-    } catch (err) {
-      toast.error(err?.data?.message || err.message);
-    }
-  };
-
   return isLoading ? (
     <p>Loading...</p>
   ) : error ? (
@@ -81,14 +68,22 @@ const OrderScreen = () => {
       <p className="text-gray-500 mb-6">Order ID: {order._id}</p>
       
       <div className="grid md:grid-cols-3 gap-8">
-        {/* Left Column: Details */}
         <div className="md:col-span-2 space-y-6">
           <div className="bg-white p-6 rounded-lg shadow-md border border-border-light">
             <h2 className="text-2xl font-bold mb-4">Shipping</h2>
             <p><strong>Name: </strong> {order.user ? order.user.name : 'Guest'}</p>
             <p><strong>Email: </strong> {order.user ? <a href={`mailto:${order.user.email}`} className="text-primary hover:underline">{order.user.email}</a> : order.shippingAddress.email}</p>
             <p><strong>Address: </strong>{order.shippingAddress.address}, {order.shippingAddress.city}{' '}{order.shippingAddress.postalCode}, {order.shippingAddress.country}</p>
-            {order.isDelivered ? ( <p className="mt-4 p-2 bg-green-100 text-green-800 rounded-md">Delivered on {new Date(order.deliveredAt).toLocaleDateString()}</p> ) : ( <p className="mt-4 p-2 bg-red-100 text-red-800 rounded-md">Not Delivered</p> )}
+            
+            {/* Updated Delivery Status Display */}
+            <div className={`mt-4 p-2 rounded-md font-medium text-sm ${
+              order.deliveryStatus === 'Delivered' ? 'bg-green-100 text-green-800' 
+              : order.deliveryStatus === 'Shipping' ? 'bg-yellow-100 text-yellow-800'
+              : 'bg-gray-100 text-gray-800'
+            }`}>
+              Status: {order.deliveryStatus}
+              {order.deliveryStatus === 'Delivered' && ` on ${new Date(order.deliveredAt).toLocaleDateString()}`}
+            </div>
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-md border border-border-light">
@@ -113,7 +108,6 @@ const OrderScreen = () => {
           </div>
         </div>
 
-        {/* Right Column: Order Summary */}
         <div className="bg-white p-6 rounded-lg shadow-md h-fit sticky top-24 border border-border-light">
           <h2 className="text-2xl font-bold mb-4 border-b border-border-light pb-4">Order Summary</h2>
           <div className="space-y-2">
@@ -132,15 +126,6 @@ const OrderScreen = () => {
               {isPending ? <p>Loading PayPal...</p> : (
                 <div><PayPalButtons createOrder={createOrder} onApprove={onApprove} onError={onError}></PayPalButtons></div>
               )}
-            </div>
-          )}
-
-          {loadingDeliver && <p>Loading...</p>}
-          {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
-            <div className="mt-4">
-              <button type="button" className="w-full bg-green-600 text-white font-bold py-3 rounded-md hover:bg-green-700" onClick={deliverOrderHandler}>
-                Mark As Delivered
-              </button>
             </div>
           )}
         </div>

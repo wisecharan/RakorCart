@@ -1,17 +1,23 @@
 import { Link } from 'react-router-dom';
 import { FaTimes } from 'react-icons/fa';
 import { useGetOrdersQuery } from '../../slices/ordersApiSlice';
+import Message from '../../components/Message';
+import Loader from '../../components/Loader';
 
 const OrderListScreen = () => {
   const { data: orders, isLoading, error } = useGetOrdersQuery();
+
+  const formatCurrency = (amount) => {
+    return `$${Number(amount).toFixed(2)}`;
+  };
 
   return (
     <div className="container mx-auto px-4 text-text-dark">
       <h1 className="text-3xl font-bold my-6">All Orders</h1>
       {isLoading ? (
-        <p>Loading...</p>
+        <Loader />
       ) : error ? (
-        <p className="text-red-500">{error?.data?.message || error.error}</p>
+        <Message variant="danger">{error?.data?.message || error.error}</Message>
       ) : (
         <div className="overflow-x-auto bg-white rounded-lg shadow-md border border-border-light">
           <table className="min-w-full">
@@ -32,15 +38,24 @@ const OrderListScreen = () => {
                   <td className="py-3 px-4 text-sm font-medium">{order._id}</td>
                   <td className="py-3 px-4 text-sm">{order.user && order.user.name}</td>
                   <td className="py-3 px-4 text-sm">{new Date(order.createdAt).toLocaleDateString()}</td>
-                  <td className="py-3 px-4 text-sm">${order.totalPrice}</td>
+                  <td className="py-3 px-4 text-sm">{formatCurrency(order.totalPrice)}</td>
                   <td className="py-3 px-4 text-center text-sm">
-                    {order.isPaid ? new Date(order.paidAt).toLocaleDateString() : <FaTimes className="text-red-500 mx-auto" />}
+                    {order.isPaid ? (
+                      <span className="text-green-600 font-semibold">✓</span>
+                    ) : (
+                      <FaTimes className="text-red-500 mx-auto" />
+                    )}
                   </td>
                   <td className="py-3 px-4 text-center text-sm">
-                    {order.isDelivered ? new Date(order.deliveredAt).toLocaleDateString() : <FaTimes className="text-red-500 mx-auto" />}
+                    {order.isDelivered ? (
+                      <span className="text-green-600 font-semibold">✓</span>
+                    ) : (
+                      <FaTimes className="text-red-500 mx-auto" />
+                    )}
                   </td>
                   <td className="py-3 px-4 text-right">
-                    <Link to={`/order/${order._id}`}>
+                    {/* CORRECTED LINK HERE */}
+                    <Link to={`/admin/order/${order._id}`}>
                       <button className="bg-gray-200 text-gray-700 text-xs py-1 px-3 rounded hover:bg-gray-300">
                         Details
                       </button>
