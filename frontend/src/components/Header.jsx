@@ -58,8 +58,8 @@ const Header = () => {
   const cartItemCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
 
   return (
-    // 2. Changed header background color
-    <header className="bg-background relative shadow-sm">
+    // Changed to white background to match website
+    <header className="bg-white sticky top-0 z-50 shadow-sm border-b border-gray-200">
       {/* Main Navigation Bar - Single Row */}
       <div>
         <div className="container mx-auto px-6">
@@ -72,24 +72,24 @@ const Header = () => {
 
             {/* Main Navigation */}
             <nav className="hidden lg:flex items-center space-x-8">
-              <Link to="/" className="text-gray-700 hover:text-primary font-medium transition-colors text-sm">Home</Link>
+              <Link to="/" className="text-gray-700 hover:text-gray-900 font-medium transition-colors text-sm">Home</Link>
               <div className="relative group">
-                <button className="text-gray-700 hover:text-primary font-medium transition-colors flex items-center text-sm">
+                <button className="text-gray-700 hover:text-gray-900 font-medium transition-colors flex items-center text-sm">
                   View Collections
                   {/* 3. Replaced SVG with Icon Component */}
                   <HiOutlineChevronDown className="w-4 h-4 ml-1" />
                 </button>
               </div>
-              <Link to="/products" className="text-gray-700 hover:text-primary font-medium transition-colors text-sm">Shop All</Link>
-              <Link to="/faq" className="text-gray-700 hover:text-primary font-medium transition-colors text-sm">FAQ</Link>
-              <Link to="/contact" className="text-gray-700 hover:text-primary font-medium transition-colors text-sm">Contact Us</Link>
+              <Link to="/products" className="text-gray-700 hover:text-gray-900 font-medium transition-colors text-sm">Shop All</Link>
+              <Link to="/faq" className="text-gray-700 hover:text-gray-900 font-medium transition-colors text-sm">FAQ</Link>
+              <Link to="/contact" className="text-gray-700 hover:text-gray-900 font-medium transition-colors text-sm">Contact Us</Link>
             </nav>
 
             {/* Right Side Icons */}
             <div className="flex items-center space-x-5">
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="text-gray-600 hover:text-primary transition-colors p-1"
+                className="text-gray-600 hover:text-gray-900 transition-colors p-1"
               >
                 {/* 3. Replaced SVG with Icon Component */}
                 <HiOutlineMagnifyingGlass size={22} strokeWidth={1.5} />
@@ -97,7 +97,7 @@ const Header = () => {
 
               {userInfo ? (
                 <div className="relative group">
-                  <button className="text-gray-600 hover:text-primary transition-colors p-1">
+                  <button className="text-gray-600 hover:text-gray-900 transition-colors p-1">
                     {/* 3. Replaced SVG with Icon Component */}
                     <HiOutlineUser size={22} strokeWidth={1.5} />
                   </button>
@@ -126,17 +126,17 @@ const Header = () => {
                   </div>
                 </div>
               ) : (
-                <Link to="/login" className="text-gray-600 hover:text-primary transition-colors p-1">
+                <Link to="/login" className="text-gray-600 hover:text-gray-900 transition-colors p-1">
                   {/* 3. Replaced SVG with Icon Component */}
                   <HiOutlineUser size={22} strokeWidth={1.5} />
                 </Link>
               )}
 
-              <Link to="/cart" className="relative text-gray-600 hover:text-primary transition-colors p-1">
+              <Link to="/cart" className="relative text-gray-600 hover:text-gray-900 transition-colors p-1">
                 {/* 3. Replaced SVG with Icon Component */}
                 <HiOutlineShoppingCart size={22} strokeWidth={1.5} />
                  {cartItemCount > 0 && (
-                    <span className="absolute -top-2 -right-3 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                    <span className="absolute -top-2 -right-3 bg-gray-800 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                         {cartItemCount}
                     </span>
                 )}
@@ -149,7 +149,7 @@ const Header = () => {
       {/* Dropdown Search Box */}
       <div
         ref={searchRef}
-        className={`absolute top-0 left-0 right-0 bg-background transition-all duration-300 ease-in-out z-40 ${
+        className={`absolute top-0 left-0 right-0 bg-white transition-all duration-300 ease-in-out z-40 border-b border-gray-200 ${
           isSearchOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
         }`}
       >
@@ -164,7 +164,7 @@ const Header = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search RakorGo"
-                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm text-gray-900 placeholder-gray-500"
+                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent text-sm text-gray-900 placeholder-gray-500"
                   autoFocus
                 />
               </form>

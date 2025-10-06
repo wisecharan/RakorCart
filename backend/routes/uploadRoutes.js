@@ -8,10 +8,10 @@ const router = express.Router();
 // Configure Multer for file storage on disk
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, 'uploads/'); // The folder where files will be saved
+    cb(null, 'uploads/'); // Files will be saved in the 'backend/uploads/' directory
   },
   filename(req, file, cb) {
-    // Create a unique filename to avoid naming conflicts
+    // Create a unique filename: fieldname-timestamp.extension
     cb(
       null,
       `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
   },
 });
 
-// Middleware to check if the file is an image
+// Middleware to check that the file is an image
 function checkFileType(file, cb) {
   const filetypes = /jpg|jpeg|png/;
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
@@ -28,13 +28,13 @@ function checkFileType(file, cb) {
   if (extname && mimetype) {
     return cb(null, true);
   } else {
-    cb('Images only!');
+    cb(new Error('Images only!'));
   }
 }
 
 const upload = multer({
   storage,
-  fileFilter: function (req, file, cb) {
+  fileFilter: (req, file, cb) => {
     checkFileType(file, cb);
   },
 });
@@ -48,8 +48,7 @@ router.post('/', protect, admin, upload.single('image'), (req, res) => {
 
   res.status(200).send({
     message: 'Image uploaded successfully',
-    // We send back the path where the image was saved
-    imageUrl: `/${req.file.path.replace(/\\/g, '/')}`,
+    imageUrl: `/${req.file.path.replace(/\\/g, '/')}`, // Send back the path to the file
   });
 });
 

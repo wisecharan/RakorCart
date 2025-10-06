@@ -9,11 +9,7 @@ const orderSchema = new mongoose.Schema(
         qty: { type: Number, required: true },
         image: { type: String, required: true },
         price: { type: Number, required: true },
-        product: {
-          type: mongoose.Schema.Types.ObjectId,
-          required: true,
-          ref: 'Product',
-        },
+        product: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Product' },
       },
     ],
     shippingAddress: {
@@ -21,6 +17,7 @@ const orderSchema = new mongoose.Schema(
       city: { type: String, required: true },
       postalCode: { type: String, required: true },
       country: { type: String, required: true },
+      email: { type: String },
     },
     paymentMethod: { type: String, required: true },
     paymentResult: {
@@ -36,7 +33,12 @@ const orderSchema = new mongoose.Schema(
     totalPrice: { type: Number, required: true, default: 0.0 },
     isPaid: { type: Boolean, required: true, default: false },
     paidAt: { type: Date },
-    isDelivered: { type: Boolean, required: true, default: false },
+    deliveryStatus: {
+      type: String,
+      required: true,
+      enum: ['Pending', 'Shipping', 'Delivered'],
+      default: 'Pending',
+    },
     deliveredAt: { type: Date },
   },
   { timestamps: true }

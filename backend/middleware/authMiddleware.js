@@ -5,7 +5,6 @@ import User from '../models/userModel.js';
 const protect = async (req, res, next) => {
   let token;
 
-  // Read the JWT from the 'Authorization' header
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
       token = req.headers.authorization.split(' ')[1];
@@ -13,6 +12,7 @@ const protect = async (req, res, next) => {
       req.user = await User.findById(decoded.userId).select('-password');
       next();
     } catch (error) {
+      console.error(error);
       res.status(401);
       throw new Error('Not authorized, token failed');
     }
@@ -34,4 +34,20 @@ const admin = (req, res, next) => {
   }
 };
 
-export { protect, admin };
+// Middleware to identify a user if logged in, but doesn't protect the route for guests
+const identifyUser = async (req, res, next) => {
+  let token;
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    try {
+      token = req.headers.authorization.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = await User.findById(decoded.userId).select('-password');
+    } catch (error) {
+      // Don't throw an error, just proceed without a user
+      req.user = null;
+    }
+  }
+  next();
+};
+
+export { protect, admin, identifyUser };

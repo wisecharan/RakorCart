@@ -25,37 +25,89 @@ const ShippingScreen = () => {
   };
 
   return (
-    <div className="flex justify-center items-start mt-10">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md border border-border-light">
+    <div className="min-h-screen bg-white py-8">
+      <div className="container mx-auto px-6 max-w-2xl">
         <CheckoutSteps step1={!userInfo} step2 />
-        <h1 className="text-3xl font-bold text-center text-text-dark">Shipping</h1>
-        <form onSubmit={submitHandler} className="space-y-4">
-          {!userInfo && (
+        
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-semibold text-gray-900 mb-4 tracking-tight">Shipping Address</h1>
+          <p className="text-gray-600 text-lg">Enter your delivery details</p>
+        </div>
+
+        <div className="bg-white rounded-xl p-8 border border-gray-200">
+          <form onSubmit={submitHandler} className="space-y-6">
+            {!userInfo && (
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
+                  required 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent"
+                  placeholder="your.email@example.com"
+                />
+              </div>
+            )}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
-              <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full px-3 py-2 mt-1 text-text-dark bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"/>
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">Address</label>
+              <input 
+                type="text" 
+                id="address" 
+                value={address} 
+                onChange={(e) => setAddress(e.target.value)} 
+                required 
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent"
+                placeholder="123 Main Street"
+              />
             </div>
-          )}
-          <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
-            <input type="text" id="address" value={address} onChange={(e) => setAddress(e.target.value)} required className="w-full px-3 py-2 mt-1 text-text-dark bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"/>
-          </div>
-          <div>
-            <label htmlFor="city" className="block text-sm font-medium text-gray-700">City</label>
-            <input type="text" id="city" value={city} onChange={(e) => setCity(e.target.value)} required className="w-full px-3 py-2 mt-1 text-text-dark bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"/>
-          </div>
-          <div>
-            <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">Postal Code</label>
-            <input type="text" id="postalCode" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} required className="w-full px-3 py-2 mt-1 text-text-dark bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"/>
-          </div>
-          <div>
-            <label htmlFor="country" className="block text-sm font-medium text-gray-700">Country</label>
-            <input type="text" id="country" value={country} onChange={(e) => setCountry(e.target.value)} required className="w-full px-3 py-2 mt-1 text-text-dark bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"/>
-          </div>
-          <button type="submit" className="w-full py-2 font-semibold text-white bg-primary rounded-md hover:bg-primary-hover transition-colors">
-            Continue to Payment
-          </button>
-        </form>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">City</label>
+                <input 
+                  type="text" 
+                  id="city" 
+                  value={city} 
+                  onChange={(e) => setCity(e.target.value)} 
+                  required 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent"
+                  placeholder="New York"
+                />
+              </div>
+              <div>
+                <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-2">Postal Code</label>
+                <input 
+                  type="text" 
+                  id="postalCode" 
+                  value={postalCode} 
+                  onChange={(e) => setPostalCode(e.target.value)} 
+                  required 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent"
+                  placeholder="10001"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">Country</label>
+              <input 
+                type="text" 
+                id="country" 
+                value={country} 
+                onChange={(e) => setCountry(e.target.value)} 
+                required 
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent"
+                placeholder="United States"
+              />
+            </div>
+            <button 
+              type="submit" 
+              className="w-full bg-gray-900 text-white font-medium py-4 px-6 rounded-xl hover:bg-gray-800 transition-colors"
+            >
+              Continue to Payment
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

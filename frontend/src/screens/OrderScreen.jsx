@@ -7,7 +7,7 @@ import {
   useGetOrderDetailsQuery,
   usePayOrderMutation,
   useGetPayPalClientIdQuery,
-} from '../slices/ordersApiSlice'; // Removed useDeliverOrderMutation
+} from '../slices/ordersApiSlice';
 
 const OrderScreen = () => {
   const { id: orderId } = useParams();
@@ -58,77 +58,136 @@ const OrderScreen = () => {
     });
   }
 
-  return isLoading ? (
-    <p>Loading...</p>
-  ) : error ? (
-    <p className="text-red-500">{error?.data?.message || error.error}</p>
-  ) : (
-    <div className="container mx-auto mt-10 text-text-dark">
-      <h1 className="text-3xl font-bold mb-6">Order Details</h1>
-      <p className="text-gray-500 mb-6">Order ID: {order._id}</p>
-      
-      <div className="grid md:grid-cols-3 gap-8">
-        <div className="md:col-span-2 space-y-6">
-          <div className="bg-white p-6 rounded-lg shadow-md border border-border-light">
-            <h2 className="text-2xl font-bold mb-4">Shipping</h2>
-            <p><strong>Name: </strong> {order.user ? order.user.name : 'Guest'}</p>
-            <p><strong>Email: </strong> {order.user ? <a href={`mailto:${order.user.email}`} className="text-primary hover:underline">{order.user.email}</a> : order.shippingAddress.email}</p>
-            <p><strong>Address: </strong>{order.shippingAddress.address}, {order.shippingAddress.city}{' '}{order.shippingAddress.postalCode}, {order.shippingAddress.country}</p>
-            
-            {/* Updated Delivery Status Display */}
-            <div className={`mt-4 p-2 rounded-md font-medium text-sm ${
-              order.deliveryStatus === 'Delivered' ? 'bg-green-100 text-green-800' 
-              : order.deliveryStatus === 'Shipping' ? 'bg-yellow-100 text-yellow-800'
-              : 'bg-gray-100 text-gray-800'
-            }`}>
-              Status: {order.deliveryStatus}
-              {order.deliveryStatus === 'Delivered' && ` on ${new Date(order.deliveredAt).toLocaleDateString()}`}
+  return (
+    <div className="min-h-screen bg-white py-8">
+      <div className="container mx-auto px-6">
+        {isLoading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+          </div>
+        ) : error ? (
+          <div className="text-center py-20">
+            <p className="text-gray-600 text-lg">{error?.data?.message || error.error}</p>
+          </div>
+        ) : (
+          <div className="max-w-6xl mx-auto">
+            {/* Header */}
+            <div className="text-center mb-12">
+              <h1 className="text-4xl font-semibold text-gray-900 mb-4 tracking-tight">Order Details</h1>
+              <p className="text-gray-600">Order ID: {order._id}</p>
             </div>
-          </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md border border-border-light">
-            <h2 className="text-2xl font-bold mb-4">Payment</h2>
-            <p><strong>Method: </strong> {order.paymentMethod}</p>
-            {order.isPaid ? ( <p className="mt-4 p-2 bg-green-100 text-green-800 rounded-md">Paid on {new Date(order.paidAt).toLocaleDateString()}</p> ) : ( <p className="mt-4 p-2 bg-red-100 text-red-800 rounded-md">Not Paid</p> )}
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-md border border-border-light">
-            <h2 className="text-2xl font-bold mb-4">Order Items</h2>
-            <div className="space-y-4">
-              {order.orderItems.map((item, index) => (
-                <div key={index} className="flex justify-between items-center border-b border-border-light pb-2 last:border-b-0">
-                  <div className="flex items-center">
-                    <img src={item.image} alt={item.name} className="w-12 h-12 rounded mr-4" />
-                    <Link to={`/product/${item.product}`} className="hover:underline font-semibold">{item.name}</Link>
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Order Details */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* Shipping Info */}
+                <div className="bg-white rounded-xl p-6 border border-gray-200">
+                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">Shipping</h2>
+                  <div className="space-y-2 text-gray-600">
+                    <p><strong>Name:</strong> {order.user ? order.user.name : 'Guest'}</p>
+                    <p><strong>Email:</strong> {order.user ? order.user.email : order.shippingAddress.email}</p>
+                    <p><strong>Address:</strong> {order.shippingAddress.address}, {order.shippingAddress.city} {order.shippingAddress.postalCode}, {order.shippingAddress.country}</p>
                   </div>
-                  <div className="text-gray-700">{item.qty} x ${item.price} = ${(item.qty * item.price).toFixed(2)}</div>
+                  
+                  {/* Delivery Status */}
+                  <div className={`mt-4 p-3 rounded-lg font-medium text-sm ${
+                    order.deliveryStatus === 'Delivered' ? 'bg-green-100 text-green-800' 
+                    : order.deliveryStatus === 'Shipping' ? 'bg-yellow-100 text-yellow-800'
+                    : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    Status: {order.deliveryStatus}
+                    {order.deliveryStatus === 'Delivered' && ` on ${new Date(order.deliveredAt).toLocaleDateString()}`}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md h-fit sticky top-24 border border-border-light">
-          <h2 className="text-2xl font-bold mb-4 border-b border-border-light pb-4">Order Summary</h2>
-          <div className="space-y-2">
-            <div className="flex justify-between"><p className="text-gray-600">Items:</p> <p className="font-semibold">${order.itemsPrice}</p></div>
-            <div className="flex justify-between"><p className="text-gray-600">Shipping:</p> <p className="font-semibold">${order.shippingPrice}</p></div>
-            <div className="flex justify-between"><p className="text-gray-600">Tax:</p> <p className="font-semibold">${order.taxPrice}</p></div>
-            {order.discountPrice > 0 && (
-              <div className="flex justify-between text-green-600"><p>Discount:</p><p className="font-semibold">-${order.discountPrice.toFixed(2)}</p></div>
-            )}
-            <div className="flex justify-between font-bold text-xl border-t border-border-light pt-4 mt-4"><p>Total:</p> <p>${order.totalPrice}</p></div>
-          </div>
-          
-          {!order.isPaid && (
-            <div className="mt-4">
-              {loadingPay && <p>Loading Payment...</p>}
-              {isPending ? <p>Loading PayPal...</p> : (
-                <div><PayPalButtons createOrder={createOrder} onApprove={onApprove} onError={onError}></PayPalButtons></div>
-              )}
+                {/* Payment Info */}
+                <div className="bg-white rounded-xl p-6 border border-gray-200">
+                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">Payment</h2>
+                  <p className="text-gray-600 mb-4"><strong>Method:</strong> {order.paymentMethod}</p>
+                  {order.isPaid ? (
+                    <div className="p-3 bg-green-100 text-green-800 rounded-lg">
+                      Paid on {new Date(order.paidAt).toLocaleDateString()}
+                    </div>
+                  ) : (
+                    <div className="p-3 bg-gray-100 text-gray-800 rounded-lg">
+                      Not Paid
+                    </div>
+                  )}
+                </div>
+
+                {/* Order Items */}
+                <div className="bg-white rounded-xl p-6 border border-gray-200">
+                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">Order Items</h2>
+                  <div className="space-y-4">
+                    {order.orderItems.map((item, index) => (
+                      <div key={index} className="flex justify-between items-center border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
+                        <div className="flex items-center">
+                          <img src={item.image} alt={item.name} className="w-16 h-16 object-contain rounded-lg mr-4" />
+                          <Link to={`/product/${item.product}`} className="font-medium text-gray-900 hover:text-gray-700 transition-colors">
+                            {item.name}
+                          </Link>
+                        </div>
+                        <div className="text-gray-900 font-medium">
+                          {item.qty} x ${item.price} = ${(item.qty * item.price).toFixed(2)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Order Summary */}
+              <div className="lg:col-span-1">
+                <div className="bg-white rounded-xl p-6 border border-gray-200 sticky top-8">
+                  <h2 className="text-2xl font-semibold text-gray-900 mb-6 pb-4 border-b border-gray-100">Order Summary</h2>
+                  <div className="space-y-3 mb-6">
+                    <div className="flex justify-between">
+                      <p className="text-gray-600">Items:</p>
+                      <p className="font-semibold text-gray-900">${order.itemsPrice}</p>
+                    </div>
+                    <div className="flex justify-between">
+                      <p className="text-gray-600">Shipping:</p>
+                      <p className="font-semibold text-gray-900">${order.shippingPrice}</p>
+                    </div>
+                    <div className="flex justify-between">
+                      <p className="text-gray-600">Tax:</p>
+                      <p className="font-semibold text-gray-900">${order.taxPrice}</p>
+                    </div>
+                    {order.discountPrice > 0 && (
+                      <div className="flex justify-between text-green-600">
+                        <p>Discount:</p>
+                        <p className="font-semibold">-${order.discountPrice.toFixed(2)}</p>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex justify-between font-semibold text-xl border-t border-gray-100 pt-4 mb-6">
+                    <p className="text-gray-900">Total:</p>
+                    <p className="text-gray-900">${order.totalPrice}</p>
+                  </div>
+                  
+                  {/* PayPal Payment */}
+                  {!order.isPaid && (
+                    <div className="mt-6">
+                      {loadingPay && <p className="text-gray-600 text-center">Loading Payment...</p>}
+                      {isPending ? (
+                        <p className="text-gray-600 text-center">Loading PayPal...</p>
+                      ) : (
+                        <div>
+                          <PayPalButtons 
+                            createOrder={createOrder} 
+                            onApprove={onApprove} 
+                            onError={onError}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -35,6 +35,8 @@ const ProfileScreen = () => {
         const res = await updateProfile({ _id: userInfo._id, name, email, password }).unwrap();
         dispatch(setCredentials(res));
         toast.success('Profile updated successfully');
+        setPassword('');
+        setConfirmPassword('');
       } catch (err) {
         toast.error(err?.data?.message || err.error);
       }
@@ -42,78 +44,162 @@ const ProfileScreen = () => {
   };
 
   return (
-    <div className="container mx-auto mt-10 text-text-dark grid md:grid-cols-3 gap-8">
-      {/* Left Column: User Profile Form */}
-      <div className="md:col-span-1">
-        <h2 className="text-3xl font-bold mb-4">User Profile</h2>
-        <form onSubmit={submitHandler} className="space-y-4 bg-white p-6 rounded-lg shadow-md border border-border-light">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2 mt-1 bg-gray-50 border border-gray-300 rounded-md"/>
+    <div className="min-h-screen bg-white py-8">
+      <div className="container mx-auto px-6">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-semibold text-gray-900 mb-4 tracking-tight">My Profile</h1>
+            <p className="text-gray-600 text-lg">Manage your account and view order history</p>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email Address</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 mt-1 bg-gray-50 border border-gray-300 rounded-md"/>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">New Password</label>
-            <input type="password" placeholder="Enter new password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-3 py-2 mt-1 bg-gray-50 border border-gray-300 rounded-md"/>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Confirm New Password</label>
-            <input type="password" placeholder="Confirm new password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-3 py-2 mt-1 bg-gray-50 border border-gray-300 rounded-md"/>
-          </div>
-          <button type="submit" className="w-full py-2 font-semibold text-white bg-primary rounded-md hover:bg-primary-hover">
-            {loadingUpdate ? 'Updating...' : 'Update Profile'}
-          </button>
-        </form>
-      </div>
 
-      {/* Right Column: My Orders */}
-      <div className="md:col-span-2">
-        <h2 className="text-3xl font-bold mb-4">My Orders</h2>
-        {isLoading ? (
-          <p>Loading orders...</p>
-        ) : error ? (
-          <p className="text-red-500">{error?.data?.message || error.error}</p>
-        ) : (
-          <div className="overflow-x-auto bg-white rounded-lg shadow-md border border-border-light">
-            <table className="min-w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DATE</th>
-                  <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TOTAL</th>
-                  <th className="py-3 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">PAID</th>
-                  <th className="py-3 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">DELIVERED</th>
-                  <th className="py-3 px-4"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {orders.map((order) => (
-                  <tr key={order._id} className="hover:bg-gray-50">
-                    <td className="py-3 px-4 text-sm">{order._id}</td>
-                    <td className="py-3 px-4 text-sm">{new Date(order.createdAt).toLocaleDateString()}</td>
-                    <td className="py-3 px-4 text-sm">${order.totalPrice}</td>
-                    <td className="py-3 px-4 text-center text-sm">
-                      {order.isPaid ? new Date(order.paidAt).toLocaleDateString() : <FaTimes className="text-red-500 mx-auto" />}
-                    </td>
-                    <td className="py-3 px-4 text-center text-sm">
-                      {order.isDelivered ? new Date(order.deliveredAt).toLocaleDateString() : <FaTimes className="text-red-500 mx-auto" />}
-                    </td>
-                    <td className="py-3 px-4 text-sm">
-                      <Link to={`/order/${order._id}`}>
-                        <button className="bg-gray-200 text-gray-700 text-xs py-1 px-3 rounded hover:bg-gray-300">
-                          Details
-                        </button>
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Profile Form */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-xl p-6 border border-gray-200">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-6">Profile Settings</h2>
+                <form onSubmit={submitHandler} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                    <input 
+                      type="text" 
+                      value={name} 
+                      onChange={(e) => setName(e.target.value)} 
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <input 
+                      type="email" 
+                      value={email} 
+                      onChange={(e) => setEmail(e.target.value)} 
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                    <input 
+                      type="password" 
+                      placeholder="Enter new password" 
+                      value={password} 
+                      onChange={(e) => setPassword(e.target.value)} 
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                    <input 
+                      type="password" 
+                      placeholder="Confirm new password" 
+                      value={confirmPassword} 
+                      onChange={(e) => setConfirmPassword(e.target.value)} 
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent"
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    disabled={loadingUpdate}
+                    className="w-full bg-gray-900 text-white font-medium py-4 px-6 rounded-xl hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {loadingUpdate ? 'Updating...' : 'Update Profile'}
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            {/* Order History */}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-xl border border-gray-200">
+                <div className="p-6 border-b border-gray-100">
+                  <h2 className="text-2xl font-semibold text-gray-900">Order History</h2>
+                </div>
+                
+                {isLoading ? (
+                  <div className="flex justify-center items-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                  </div>
+                ) : error ? (
+                  <div className="text-center py-12">
+                    <p className="text-gray-600">{error?.data?.message || error.error}</p>
+                  </div>
+                ) : orders && orders.length > 0 ? (
+                  <div className="overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="py-4 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+                            <th className="py-4 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th className="py-4 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                            <th className="py-4 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Paid</th>
+                            <th className="py-4 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Delivered</th>
+                            <th className="py-4 px-6 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {orders.map((order) => (
+                            <tr key={order._id} className="hover:bg-gray-50 transition-colors">
+                              <td className="py-4 px-6 text-sm text-gray-900 font-medium">
+                                {order._id.substring(0, 8)}...
+                              </td>
+                              <td className="py-4 px-6 text-sm text-gray-600">
+                                {new Date(order.createdAt).toLocaleDateString()}
+                              </td>
+                              <td className="py-4 px-6 text-sm text-gray-900 font-medium">
+                                ${order.totalPrice}
+                              </td>
+                              <td className="py-4 px-6 text-center text-sm">
+                                {order.isPaid ? (
+                                  <span className="text-green-600 font-medium">
+                                    {new Date(order.paidAt).toLocaleDateString()}
+                                  </span>
+                                ) : (
+                                  <FaTimes className="text-red-500 mx-auto" size={14} />
+                                )}
+                              </td>
+                              <td className="py-4 px-6 text-center text-sm">
+                                {order.isDelivered ? (
+                                  <span className="text-green-600 font-medium">
+                                    {new Date(order.deliveredAt).toLocaleDateString()}
+                                  </span>
+                                ) : (
+                                  <FaTimes className="text-red-500 mx-auto" size={14} />
+                                )}
+                              </td>
+                              <td className="py-4 px-6 text-right text-sm">
+                                <Link to={`/order/${order._id}`}>
+                                  <button className="text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors">
+                                    View Details
+                                  </button>
+                                </Link>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                      </svg>
+                    </div>
+                    <p className="text-gray-600 mb-4">No orders yet</p>
+                    <Link 
+                      to="/products" 
+                      className="inline-block bg-gray-900 text-white font-medium py-3 px-6 rounded-xl hover:bg-gray-800 transition-colors"
+                    >
+                      Start Shopping
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
