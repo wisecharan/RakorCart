@@ -1,4 +1,4 @@
-RakorCart is a work-in-progress e-commerce web application built using Express.js. It is designed to deliver a responsive and secure online shopping experience. Currently in development, the application focuses on providing secure transaction processing, a user-friendly product catalog, and a responsive interface. RakorCart is also being designed with scalability in mind to accommodate growing product lines and increasing user traffic.
+RakorGo is a work-in-progress e-commerce web application built using Express.js. It is designed to deliver a responsive and secure online shopping experience. Currently in development, the application focuses on providing secure transaction processing, a user-friendly product catalog, and a responsive interface. RakorCart is also being designed with scalability in mind to accommodate growing product lines and increasing user traffic.
 
 Note: This project is still under development, and new features are being added regularly. Some functionality may be incomplete or subject to change.
 
