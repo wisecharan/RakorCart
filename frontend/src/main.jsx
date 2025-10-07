@@ -18,7 +18,6 @@ import PrivateRoute from './components/PrivateRoute.jsx';
 import AdminRoute from './components/AdminRoute.jsx';
 import AdminLayout from './components/AdminLayout.jsx';
 
-
 // Screens
 import HomeScreen from './screens/HomeScreen.jsx';
 import ProductScreen from './screens/ProductScreen.jsx';
@@ -29,12 +28,17 @@ import ShippingScreen from './screens/ShippingScreen.jsx';
 import PaymentScreen from './screens/PaymentScreen.jsx';
 import PlaceOrderScreen from './screens/PlaceOrderScreen.jsx';
 import OrderScreen from './screens/OrderScreen.jsx';
-import ProfileScreen from './screens/ProfileScreen.jsx';
 import WishlistScreen from './screens/WishlistScreen.jsx';
 import ShopAllScreen from './screens/ShopAllScreen.jsx';
 import FAQScreen from './screens/FAQScreen.jsx';
 import ContactScreen from './screens/ContactScreen.jsx';
 import ProductAddScreen from './screens/admin/ProductAddScreen.jsx';
+import CollectionsScreen from './screens/CollectionsScreen.jsx';
+
+// ** NEWLY ADDED IMPORTS **
+import ProfileLayout from './components/ProfileLayout.jsx';
+import ProfileSettingsScreen from './screens/ProfileSettingsScreen.jsx';
+import MyOrdersScreen from './screens/MyOrdersScreen.jsx';
 
 // Admin Screens
 import DashboardScreen from './screens/admin/DashboardScreen.jsx';
@@ -67,12 +71,16 @@ const router = createBrowserRouter(
         <Route path="/contact" element={<ContactScreen />} />
 
         <Route path="" element={<PrivateRoute />}>
+          <Route path="/collections" element={<CollectionsScreen />} />
           <Route path="/shipping" element={<ShippingScreen />} />
           <Route path="/payment" element={<PaymentScreen />} />
           <Route path="/placeorder" element={<PlaceOrderScreen />} />
           <Route path="/order/:id" element={<OrderScreen />} />
-          <Route path="/profile" element={<ProfileScreen />} />
           <Route path="/wishlist" element={<WishlistScreen />} />
+          <Route path="/profile" element={<ProfileLayout />}>
+            <Route index={true} element={<ProfileSettingsScreen />} />
+            <Route path="myorders" element={<MyOrdersScreen />} />
+          </Route>
         </Route>
       </Route>
 

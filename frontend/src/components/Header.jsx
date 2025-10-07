@@ -3,9 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { logout } from '../slices/authSlice';
 import { useState, useRef, useEffect } from 'react';
 // 1. Import minimalist icons from Heroicons
-import { 
-  HiOutlineMagnifyingGlass, 
-  HiOutlineShoppingCart, 
+import {
+  HiOutlineMagnifyingGlass,
+  HiOutlineShoppingCart,
   HiOutlineUser,
   HiOutlineChevronDown,
   HiOutlineXMark
@@ -74,11 +74,13 @@ const Header = () => {
             <nav className="hidden lg:flex items-center space-x-8">
               <Link to="/" className="text-gray-700 hover:text-gray-900 font-medium transition-colors text-sm">Home</Link>
               <div className="relative group">
-                <button className="text-gray-700 hover:text-gray-900 font-medium transition-colors flex items-center text-sm">
+                <Link
+                  to="/collections"
+                  className="text-gray-700 hover:text-gray-900 font-medium transition-colors flex items-center text-sm"
+                >
                   View Collections
-                  {/* 3. Replaced SVG with Icon Component */}
                   <HiOutlineChevronDown className="w-4 h-4 ml-1" />
-                </button>
+                </Link>
               </div>
               <Link to="/products" className="text-gray-700 hover:text-gray-900 font-medium transition-colors text-sm">Shop All</Link>
               <Link to="/faq" className="text-gray-700 hover:text-gray-900 font-medium transition-colors text-sm">FAQ</Link>
@@ -135,10 +137,10 @@ const Header = () => {
               <Link to="/cart" className="relative text-gray-600 hover:text-gray-900 transition-colors p-1">
                 {/* 3. Replaced SVG with Icon Component */}
                 <HiOutlineShoppingCart size={22} strokeWidth={1.5} />
-                 {cartItemCount > 0 && (
-                    <span className="absolute -top-2 -right-3 bg-gray-800 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                        {cartItemCount}
-                    </span>
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-2 -right-3 bg-gray-800 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                    {cartItemCount}
+                  </span>
                 )}
               </Link>
             </div>
@@ -149,9 +151,8 @@ const Header = () => {
       {/* Dropdown Search Box */}
       <div
         ref={searchRef}
-        className={`absolute top-0 left-0 right-0 bg-white transition-all duration-300 ease-in-out z-40 border-b border-gray-200 ${
-          isSearchOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
-        }`}
+        className={`absolute top-0 left-0 right-0 bg-white transition-all duration-300 ease-in-out z-40 border-b border-gray-200 ${isSearchOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
+          }`}
       >
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-center">
@@ -170,11 +171,11 @@ const Header = () => {
               </form>
             </div>
             <button
-                onClick={() => setIsSearchOpen(false)}
-                className="ml-3 p-2 text-gray-500 hover:text-gray-700 transition-colors"
+              onClick={() => setIsSearchOpen(false)}
+              className="ml-3 p-2 text-gray-500 hover:text-gray-700 transition-colors"
             >
-                {/* 3. Replaced SVG with Icon Component */}
-                <HiOutlineXMark size={24} strokeWidth={2} />
+              {/* 3. Replaced SVG with Icon Component */}
+              <HiOutlineXMark size={24} strokeWidth={2} />
             </button>
           </div>
         </div>
